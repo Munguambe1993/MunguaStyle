@@ -3,13 +3,13 @@
 // =====================
 const produtos = [
   {
-    nome: "Camiseta MunguaStyle",
+    nome: "t-shirt",
     preco: 500,
-    imagem: "produtos/camiseta.jpg",
+    imagem: "produtos/t-shirt.jpg",
     descricao: "Camiseta jovem e estilosa"
   },
   {
-    nome: "Tênis MunguaStyle",
+    nome: "Tênis",
     preco: 1500,
     imagem: "produtos/tenis.jpg",
     descricao: "Tênis confortável para o dia a dia"
@@ -17,8 +17,14 @@ const produtos = [
   {
     nome: "Calça MunguaStyle",
     preco: 1200,
-    imagem: "produtos/calca.jpg",
+    imagem: "produtos/jeans.jpg",
     descricao: "Calça moderna e versátil"
+  }
+   {
+    nome: "vestido",
+    preco: 1200,
+    imagem: "produtos/vestido.jpg",
+    descricao: "Vestido casual e versátil"
   }
 ];
 
