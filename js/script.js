@@ -1,152 +1,291 @@
-// =====================
-// Lista de Produtos
-// =====================
-const produtos = [
-  {
-    nome: "t-shirt",
-    preco: 500,
-    imagem: "produtos/t-shirt.jpg",
-    descricao: "Camiseta jovem e estilosa"
-  },
-  {
-    nome: "Tênis",
-    preco: 1500,
-    imagem: "produtos/tenis.jpg",
-    descricao: "Tênis confortável para o dia a dia"
-  },
-  {
-    nome: "Calça MunguaStyle",
-    preco: 1200,
-    imagem: "produtos/jeans.jpg",
-    descricao: "Calça moderna e versátil"
-  }
-   {
-    nome: "vestido",
-    preco: 1200,
-    imagem: "produtos/vestido.jpg",
-    descricao: "Vestido casual e versátil"
-  }
+let products = [
+    { name: "T-shirt Street", price: 1200, category: "roupa", img: "produtos/t-shirt.jpg", desc: "T-shirt confortável de algodão, estilo urbano." },
+    { name: "Calça Jeans", price: 2100, category: "roupa", img: "produtos/jeans.jpg", desc: "Calça jeans resistente e moderna." },
+    { name: "Ténis Moderno", price: 3000, category: "calcado", img: "produtos/tenis.jpg", desc: "Ténis leve e estiloso para o dia-a-dia." },
+    { name: "Vestido Casual", price: 2050, category: "roupa", img: "produtos/vestido.jpg", desc: "Vestido casual elegante para ocasiões especiais." }
 ];
 
-// =====================
-// Renderização de Produtos
-// =====================
-function renderProducts(lista = produtos) {
-  const container = document.getElementById("products");
-  container.innerHTML = "";
+let cart = [];
+let selectedProduct = null;
+let metodoSelecionado = "";
 
-  lista.forEach((p, index) => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-
-    card.innerHTML = `
-      <img src="${p.imagem}" alt="${p.nome}" onclick="abrirModal(${index})">
-      <h3>${p.nome}</h3>
-      <p>${p.preco} MZN</p>
-      <button onclick="addToCart(${index})">Adicionar ao carrinho</button>
-    `;
-
-    container.appendChild(card);
-  });
+// Renderizar produtos com verificação de segurança para o GitHub
+function renderProducts(list = products) {
+    let html = "";
+    list.forEach(p => {
+        html += `
+        <div class="product" onclick="openProduct('${p.name}')">
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <p>${p.price} MZN</p>
+            <div class="stars">⭐⭐⭐⭐⭐</div>
+        </div>`;
+    });
+    
+    let container = document.getElementById("products");
+    if (container) {
+        container.innerHTML = html;
+    }
 }
 
-// =====================
-// Modal de Produto
-// =====================
-function abrirModal(index) {
-  const produto = produtos[index];
-  document.getElementById("modalImg").src = produto.imagem;
-  document.getElementById("modalName").textContent = produto.nome;
-  document.getElementById("modalPrice").textContent = produto.preco + " MZN";
-  document.getElementById("modalDesc").textContent = produto.descricao;
-  document.getElementById("productModal").classList.remove("hidden");
+// Abrir modal corrigido para não quebrar no GitHub
+function openProduct(name) {
+    let p = products.find(x => x.name === name);
+    if (!p) return;
+    
+    selectedProduct = p;
+    
+    let img = document.getElementById("modalImg");
+    let nameElem = document.getElementById("modalName");
+    let priceElem = document.getElementById("modalPrice");
+    let descElem = document.getElementById("modalDesc");
+    let qtyElem = document.getElementById("qty");
+    let modal = document.getElementById("productModal");
+
+    if (img) img.src = p.img;
+    if (nameElem) nameElem.innerText = p.name;
+    if (priceElem) priceElem.innerText = p.price + " MZN";
+    if (descElem) descElem.innerText = p.desc;
+    if (qtyElem) qtyElem.value = 1; 
+    
+    if (modal) modal.classList.remove("hidden");
 }
 
+// Fechar modal
 function closeModal() {
-  document.getElementById("productModal").classList.add("hidden");
+    let modal = document.getElementById("productModal");
+    if (modal) modal.classList.add("hidden");
 }
 
-// =====================
-// Carrinho
-// =====================
-let carrinho = [];
-
-function addToCart(index) {
-  const produto = produtos[index];
-  carrinho.push(produto);
-  atualizarCarrinho();
-}
-
+// Adicionar ao carrinho
 function confirmAdd() {
-  const nome = document.getElementById("modalName").textContent;
-  const produto = produtos.find(p => p.nome === nome);
-  carrinho.push(produto);
-  atualizarCarrinho();
-  closeModal();
+    if (!selectedProduct) return;
+    
+    let qtyElem = document.getElementById("qty");
+    let qty = qtyElem ? parseInt(qtyElem.value) : 1;
+    
+    let existing = cart.find(i => i.name === selectedProduct.name);
+    if (existing) {
+        existing.qty += qty;
+    } else {
+        cart.push({ ...selectedProduct, qty });
+    }
+    updateCart();
+    closeModal();
+    showToast("✅ Produto adicionado à carrinha!");
 }
 
-function atualizarCarrinho() {
-  document.getElementById("cart-count").textContent = carrinho.length;
-  const lista = document.getElementById("cart-items");
-  lista.innerHTML = "";
-  let total = 0;
+// Atualizar carrinho
+function updateCart() {
+    let total = 0;
+    let html = "";
+    cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        html += `
+        <li>
+            <b>${item.qty}x</b> ${item.name} 
+            = ${item.price * item.qty} MZN
+            <button onclick="removeItem(${index})">❌</button>
+        </li>`;
+    });
+    
+    let cartItems = document.getElementById("cart-items");
+    let totalElem = document.getElementById("total");
+    let cartCount = document.getElementById("cart-count");
 
-  carrinho.forEach((p) => {
-    const li = document.createElement("li");
-    li.textContent = `${p.nome} - ${p.preco} MZN`;
-    lista.appendChild(li);
-    total += p.preco;
-  });
+    if (cartItems) cartItems.innerHTML = html;
+    if (totalElem) totalElem.innerText = total;
+    if (cartCount) cartCount.innerText = cart.length;
 
-  document.getElementById("total").textContent = total;
+    if (cart.length === 0) {
+        resetFluxoPagamento();
+    }
 }
 
-// =====================
-// Pesquisa e Filtro
-// =====================
-function searchProduct() {
-  const termo = document.getElementById("search").value.toLowerCase();
-  const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
-  renderProducts(filtrados);
+// Remover item
+function removeItem(index) {
+    cart.splice(index, 1);
+    updateCart();
 }
 
-function filterCategory(categoria) {
-  if (categoria === "all") {
-    renderProducts();
-  } else {
-    const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(categoria));
-    renderProducts(filtrados);
-  }
+// Mostrar/ocultar painel da carrinha
+function toggleCart() {
+    let panel = document.getElementById("cart-panel");
+    if (panel) {
+        panel.classList.toggle("hidden");
+    }
+    resetFluxoPagamento();
 }
 
-// =====================
-// Pagamento
-// =====================
+// --- FLUXO DE PAGAMENTO COMPLETO ---
+function resetFluxoPagamento() {
+    let flow = document.getElementById("payment-flow");
+    let inputs = document.getElementById("payment-inputs");
+    let btnPay = document.getElementById("btn-ir-pagamento");
+
+    if (flow) flow.classList.add("hidden");
+    if (inputs) inputs.classList.add("hidden");
+    if (btnPay) btnPay.classList.remove("hidden");
+    metodoSelecionado = "";
+}
+
 function mostrarOpcoesPagamento() {
-  document.getElementById("payment-flow").classList.remove("hidden");
+    if (cart.length === 0) {
+        alert("⚠️ A sua carrinha está vazia!");
+        return;
+    }
+    let flow = document.getElementById("payment-flow");
+    let btnPay = document.getElementById("btn-ir-pagamento");
+
+    if (flow) flow.classList.remove("hidden");
+    if (btnPay) btnPay.classList.add("hidden");
 }
 
 function selecionarMetodo(metodo) {
-  document.getElementById("payment-inputs").classList.remove("hidden");
-  document.getElementById("payment-title").textContent = "Pagamento via " + metodo.toUpperCase();
+    metodoSelecionado = metodo;
+    
+    let inputsBox = document.getElementById("payment-inputs");
+    if (inputsBox) inputsBox.classList.remove("hidden");
+    
+    let title = document.getElementById("payment-title");
+    let mobileFields = document.getElementById("mobile-wallet-fields");
+    let visaFields = document.getElementById("visa-fields");
 
-  document.getElementById("mobile-wallet-fields").classList.add("hidden");
-  document.getElementById("visa-fields").classList.add("hidden");
+    if (mobileFields) mobileFields.classList.add("hidden");
+    if (visaFields) visaFields.classList.add("hidden");
+    
+    let phoneInput = document.getElementById("phone-number");
+    let cardInput = document.getElementById("card-number");
+    let cvvInput = document.getElementById("card-cvv");
+    let pinInput = document.getElementById("card-pin");
 
-  if (metodo === "mpesa" || metodo === "emola" || metodo === "mcash") {
-    document.getElementById("mobile-wallet-fields").classList.remove("hidden");
-  } else if (metodo === "visa") {
-    document.getElementById("visa-fields").classList.remove("hidden");
-  }
+    if (phoneInput) phoneInput.value = "";
+    if (cardInput) cardInput.value = "";
+    if (cvvInput) cvvInput.value = "";
+    if (pinInput) pinInput.value = "";
+
+    if (metodo === 'mpesa' && title && mobileFields) {
+        title.innerText = "Pagamento via M-Pesa (Vodacom)";
+        mobileFields.classList.remove("hidden");
+    } else if (metodo === 'emola' && title && mobileFields) {
+        title.innerText = "Pagamento via e-Mola (Movitel)";
+        mobileFields.classList.remove("hidden");
+    } else if (metodo === 'mcash' && title && mobileFields) {
+        title.innerText = "Pagamento via mKesh (Tmcel)";
+        mobileFields.classList.remove("hidden");
+    } else if (metodo === 'visa' && title && visaFields) {
+        title.innerText = "Pagamento via Cartão Visa";
+        visaFields.classList.remove("hidden");
+    }
 }
 
 function processarPagamentoFinal() {
-  const numeroPedido = "MS-" + Math.floor(Math.random() * 100000);
-  document.getElementById("orderNumber").textContent = numeroPedido;
-  alert("Pagamento confirmado! Encomenda Nº " + numeroPedido);
+    if (metodoSelecionado === "") return;
+
+    if (metodoSelecionado === 'visa') {
+        let numCartao = document.getElementById("card-number").value.trim();
+        let cvv = document.getElementById("card-cvv").value.trim();
+        let pin = document.getElementById("card-pin").value.trim();
+
+        if (numCartao.length < 16 || cvv.length < 3 || pin.length < 4) {
+            alert("❌ Por favor, preencha todos os dados do cartão corretamente (Número, CVV e PIN).");
+            return;
+        }
+        alert("🔗 Processando pagamento via Cartão Visa... PIN validado.");
+        
+    } else {
+        let telefone = document.getElementById("phone-number").value.trim();
+        
+        if (telefone.length !== 9) {
+            alert("❌ O número de telefone deve ter 9 dígitos.");
+            return;
+        }
+
+        let prefixo2 = telefone.substring(0, 2);
+
+        if (metodoSelecionado === 'mpesa') {
+            if (prefixo2 !== '84' && prefixo2 !== '85') {
+                alert("❌ Número inválido para M-Pesa. Deve começar com 84 ou 85.");
+                return;
+            }
+            alert("🔗 Pedido M-Pesa enviado para o número " + telefone + ". Introduza o seu PIN no telemóvel.");
+        } 
+        else if (metodoSelecionado === 'emola') {
+            if (prefixo2 !== '86' && prefixo2 !== '87' && prefixo2 !== '88') {
+                alert("❌ Número inválido para e-Mola. Deve começar com 86, 87 ou 88.");
+                return;
+            }
+            alert("🔗 Pedido e-Mola enviado para o número " + telefone + ". Introduza o seu PIN no telemóvel.");
+        } 
+        else if (metodoSelecionado === 'mcash') {
+            if (prefixo2 !== '82' && prefixo2 !== '83') {
+                alert("❌ Número inválido para mKesh. Deve começar com 82 ou 83.");
+                return;
+            }
+            alert("🔗 Pedido mKesh enviado para o número " + telefone + ". Introduza o seu PIN no telemóvel.");
+        }
+    }
+
+    alert("🎉 Compra efetuada com sucesso!");
+    cart = [];
+    updateCart();
+    toggleCart();
 }
 
-// =====================
-// Inicialização
-// =====================
-document.addEventListener("DOMContentLoaded", renderProducts);
+// --- FUNÇÕES DE GESTORES ---
+function loginGestor() {
+    let userElem = document.getElementById("loginUser");
+    let passElem = document.getElementById("loginPass");
+    
+    let user = userElem ? userElem.value : "";
+    let pass = passElem ? passElem.value : "";
+    
+    if(user === "" || pass === "") {
+        alert("Por favor, preencha o usuário e a palavra-passe.");
+        return;
+    }
+    alert("Tentativa de login para o gestor: " + user);
+}
+
+function abrirCadastroGestor() {
+    alert("Redirecionando para a página/formulário de inscrição de novos Gestores...");
+}
+
+// Pesquisa e Filtros
+function searchProduct() {
+    let searchInput = document.getElementById("search");
+    if (!searchInput) return;
+    
+    let val = searchInput.value.toLowerCase();
+    let filtered = products.filter(p => p.name.toLowerCase().includes(val));
+    renderProducts(filtered);
+}
+
+function filterCategory(cat) {
+    if (cat === "all") return renderProducts();
+    let filtered = products.filter(p => p.category === cat);
+    renderProducts(filtered);
+}
+
+function showToast(msg) {
+    let toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 2500);
+}
+
+// Inicialização segura ativada ao carregar a página por completo
+document.addEventListener("DOMContentLoaded", () => {
+    let orderNumElem = document.getElementById("orderNumber");
+    if (orderNumElem) {
+        orderNumElem.innerText = "ORD-" + Date.now();
+    }
+    
+    renderProducts();
+    
+    let cartIcon = document.getElementById("cartIcon");
+    if (cartIcon) {
+        cartIcon.addEventListener("click", toggleCart);
+    }
+});
