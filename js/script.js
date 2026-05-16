@@ -21,29 +21,49 @@ function renderProducts(list = products) {
             <div class="stars">⭐⭐⭐⭐⭐</div>
         </div>`;
     });
-    document.getElementById("products").innerHTML = html;
+    
+    let container = document.getElementById("products");
+    if (container) {
+        container.innerHTML = html;
+    }
 }
 
 // Abrir modal
 function openProduct(name) {
     let p = products.find(x => x.name === name);
+    if (!p) return;
+    
     selectedProduct = p;
-    document.getElementById("modalImg").src = p.img;
-    document.getElementById("modalName").innerText = p.name;
-    document.getElementById("modalPrice").innerText = p.price + " MZN";
-    document.getElementById("modalDesc").innerText = p.desc;
-    document.getElementById("qty").value = 1; // Reseta para 1
-    document.getElementById("productModal").classList.remove("hidden");
+    
+    let img = document.getElementById("modalImg");
+    let nameElem = document.getElementById("modalName");
+    let priceElem = document.getElementById("modalPrice");
+    let descElem = document.getElementById("modalDesc");
+    let qtyElem = document.getElementById("qty");
+    let modal = document.getElementById("productModal");
+
+    if (img) img.src = p.img;
+    if (nameElem) nameElem.innerText = p.name;
+    if (priceElem) priceElem.innerText = p.price + " MZN";
+    if (descElem) descElem.innerText = p.desc;
+    if (qtyElem) qtyElem.value = 1; // Reseta para 1 de forma segura
+    
+    if (modal) modal.classList.remove("hidden");
 }
 
 // Fechar modal
 function closeModal() {
-    document.getElementById("productModal").classList.add("hidden");
+    let modal = document.getElementById("productModal");
+    if (modal) modal.classList.add("hidden");
 }
 
 // Adicionar ao carrinho
 function confirmAdd() {
-    let qty = parseInt(document.getElementById("qty").value);
+    if (!selectedProduct) return;
+    
+    let qtyElem = document.getElementById("qty");
+    let qty = qtyElem ? parseInt(qtyElem.value) : 1;
+    
     let existing = cart.find(i => i.name === selectedProduct.name);
     if (existing) {
         existing.qty += qty;
@@ -68,12 +88,17 @@ function updateCart() {
             <button onclick="removeItem(${index})">❌</button>
         </li>`;
     });
-    document.getElementById("cart-items").innerHTML = html;
-    document.getElementById("total").innerText = total;
-    document.getElementById("cart-count").innerText = cart.length;
+    
+    let cartItems = document.getElementById("cart-items");
+    let totalElem = document.getElementById("total");
+    let cartCount = document.getElementById("cart-count");
+
+    if (cartItems) cartItems.innerHTML = html;
+    if (totalElem) totalElem.innerText = total;
+    if (cartCount) cartCount.innerText = cart.length;
 
     // Se o carrinho ficar vazio, esconde a área de pagamentos
-    if(cart.length === 0) {
+    if (cart.length === 0) {
         resetFluxoPagamento();
     }
 }
@@ -86,7 +111,10 @@ function removeItem(index) {
 
 // Mostrar/ocultar painel da carrinha
 function toggleCart() {
-    document.getElementById("cart-panel").classList.toggle("hidden");
+    let panel = document.getElementById("cart-panel");
+    if (panel) {
+        panel.classList.toggle("hidden");
+    }
     // Sempre que abrir/fechar, reseta o fluxo para o cliente verificar primeiro
     resetFluxoPagamento();
 }
@@ -94,9 +122,13 @@ function toggleCart() {
 // --- FLUXO DE PAGAMENTO COMPLETO ---
 
 function resetFluxoPagamento() {
-    document.getElementById("payment-flow").classList.add("hidden");
-    document.getElementById("payment-inputs").classList.add("hidden");
-    document.getElementById("btn-ir-pagamento").classList.remove("hidden");
+    let flow = document.getElementById("payment-flow");
+    let inputs = document.getElementById("payment-inputs");
+    let btnPay = document.getElementById("btn-ir-pagamento");
+
+    if (flow) flow.classList.add("hidden");
+    if (inputs) inputs.classList.add("hidden");
+    if (btnPay) btnPay.classList.remove("hidden");
     metodoSelecionado = "";
 }
 
@@ -105,37 +137,47 @@ function mostrarOpcoesPagamento() {
         alert("⚠️ A sua carrinha está vazia!");
         return;
     }
-    // Mostra as opções após o cliente confirmar o que está na carrinha
-    document.getElementById("payment-flow").classList.remove("hidden");
-    document.getElementById("btn-ir-pagamento").classList.add("hidden");
+    let flow = document.getElementById("payment-flow");
+    let btnPay = document.getElementById("btn-ir-pagamento");
+
+    if (flow) flow.classList.remove("hidden");
+    if (btnPay) btnPay.classList.add("hidden");
 }
 
 function selecionarMetodo(metodo) {
     metodoSelecionado = metodo;
-    document.getElementById("payment-inputs").classList.remove("hidden");
+    
+    let inputsBox = document.getElementById("payment-inputs");
+    if (inputsBox) inputsBox.classList.remove("hidden");
     
     let title = document.getElementById("payment-title");
     let mobileFields = document.getElementById("mobile-wallet-fields");
     let visaFields = document.getElementById("visa-fields");
 
-    // Reset de campos
-    mobileFields.classList.add("hidden");
-    visaFields.classList.add("hidden");
-    document.getElementById("phone-number").value = "";
-    document.getElementById("card-number").value = "";
-    document.getElementById("card-cvv").value = "";
-    document.getElementById("card-pin").value = "";
+    // Reset de campos com proteção contra nulos
+    if (mobileFields) mobileFields.classList.add("hidden");
+    if (visaFields) visaFields.classList.add("hidden");
+    
+    let phoneInput = document.getElementById("phone-number");
+    let cardInput = document.getElementById("card-number");
+    let cvvInput = document.getElementById("card-cvv");
+    let pinInput = document.getElementById("card-pin");
 
-    if (metodo === 'mpesa') {
+    if (phoneInput) phoneInput.value = "";
+    if (cardInput) cardInput.value = "";
+    if (cvvInput) cvvInput.value = "";
+    if (pinInput) pinInput.value = "";
+
+    if (metodo === 'mpesa' && title && mobileFields) {
         title.innerText = "Pagamento via M-Pesa (Vodacom)";
         mobileFields.classList.remove("hidden");
-    } else if (metodo === 'emola') {
+    } else if (metodo === 'emola' && title && mobileFields) {
         title.innerText = "Pagamento via e-Mola (Movitel)";
         mobileFields.classList.remove("hidden");
-    } else if (metodo === 'mcash') {
+    } else if (metodo === 'mcash' && title && mobileFields) {
         title.innerText = "Pagamento via mKesh (Tmcel)";
         mobileFields.classList.remove("hidden");
-    } else if (metodo === 'visa') {
+    } else if (metodo === 'visa' && title && visaFields) {
         title.innerText = "Pagamento via Cartão Visa";
         visaFields.classList.remove("hidden");
     }
@@ -156,7 +198,6 @@ function processarPagamentoFinal() {
         alert("🔗 Processando pagamento via Cartão Visa... PIN validado.");
         
     } else {
-        // Validação de Carteiras Móveis (M-Pesa, e-Mola, mKesh)
         let telefone = document.getElementById("phone-number").value.trim();
         
         if (telefone.length !== 9) {
@@ -164,7 +205,7 @@ function processarPagamentoFinal() {
             return;
         }
 
-        let prefixo2 = telefone.substring(0, 2); // Pega os 2 primeiros números
+        let prefixo2 = telefone.substring(0, 2);
 
         if (metodoSelecionado === 'mpesa') {
             if (prefixo2 !== '84' && prefixo2 !== '85') {
@@ -189,7 +230,6 @@ function processarPagamentoFinal() {
         }
     }
 
-    // Sucesso na compra, limpa tudo
     alert("🎉 Compra efetuada com sucesso!");
     cart = [];
     updateCart();
@@ -198,8 +238,11 @@ function processarPagamentoFinal() {
 
 // --- FUNÇÕES DE GESTORES ---
 function loginGestor() {
-    let user = document.getElementById("loginUser").value;
-    let pass = document.getElementById("loginPass").value;
+    let userElem = document.getElementById("loginUser");
+    let passElem = document.getElementById("loginPass");
+    
+    let user = userElem ? userElem.value : "";
+    let pass = passElem ? passElem.value : "";
     
     if(user === "" || pass === "") {
         alert("Por favor, preencha o usuário e a palavra-passe.");
@@ -214,11 +257,15 @@ function abrirCadastroGestor() {
 
 // Pesquisa e Filtros
 function searchProduct() {
-    let val = document.getElementById("search").value.toLowerCase();
+    let searchInput = document.getElementById("search");
+    if (!searchInput) return;
+    
+    let val = searchInput.value.toLowerCase();
     let filtered = products.filter(p => p.name.toLowerCase().includes(val));
     renderProducts(filtered);
 }
 
+// Filtro de categoria
 function filterCategory(cat) {
     if (cat === "all") return renderProducts();
     let filtered = products.filter(p => p.category === cat);
@@ -233,122 +280,17 @@ function showToast(msg) {
     setTimeout(() => { toast.remove(); }, 2500);
 }
 
+// Inicialização segura com o DOM carregado
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("orderNumber").innerText = "ORD-" + Date.now();
+    let orderNumElem = document.getElementById("orderNumber");
+    if (orderNumElem) {
+        orderNumElem.innerText = "ORD-" + Date.now();
+    }
+    
     renderProducts();
-    document.getElementById("cartIcon").addEventListener("click", toggleCart);
-});let products = [
-    { name: "T-shirt Street", price: 1200, category: "roupa", img: "produtos/t-shirt.jpg", desc: "T-shirt confortável de algodão, estilo urbano." },
-    { name: "Calça Jeans", price: 2100, category: "roupa", img: "produtos/jeans.jpg", desc: "Calça jeans resistente e moderna." },
-    { name: "Ténis Moderno", price: 3000, category: "calcado", img: "produtos/tenis.jpg", desc: "Ténis leve e estiloso para o dia-a-dia." },
-    { name: "Vestido Casual", price: 2050, category: "roupa", img: "produtos/vestido.jpg", desc: "Vestido casual elegante para ocasiões especiais." }
-];
-
-let cart = [];
-let selectedProduct = null;
-
-function renderProducts(list = products) {
-    let html = "";
-    list.forEach(p => {
-        html += `
-        <div class="product" onclick="openProduct('${p.name}')">
-            <img src="${p.img}">
-            <h3>${p.name}</h3>
-            <p>${p.price} MZN</p>
-            <div class="stars">⭐⭐⭐⭐⭐</div>
-        </div>`;
-    });
-    document.getElementById("products").innerHTML = html;
-}
-
-function openProduct(name) {
-    let p = products.find(x => x.name === name);
-    selectedProduct = p;
-    document.getElementById("modalImg").src = p.img;
-    document.getElementById("modalName").innerText = p.name;
-    document.getElementById("modalPrice").innerText = p.price + " MZN";
-    document.getElementById("modalDesc").innerText = p.desc;
-    document.getElementById("productModal").classList.remove("hidden");
-}
-
-function closeModal() {
-    document.getElementById("productModal").classList.add("hidden");
-}
-
-function confirmAdd() {
-    let qty = parseInt(document.getElementById("qty").value);
-    let existing = cart.find(i => i.name === selectedProduct.name);
-    if (existing) {
-        existing.qty += qty;
-    } else {
-        cart.push({ ...selectedProduct, qty });
+    
+    let cartIcon = document.getElementById("cartIcon");
+    if (cartIcon) {
+        cartIcon.addEventListener("click", toggleCart);
     }
-    updateCart();
-    closeModal();
-    showToast("✅ Produto adicionado ao carrinho!");
-}
-
-function updateCart() {
-    let total = 0;
-    let html = "";
-    cart.forEach((item, index) => {
-        total += item.price * item.qty;
-        html += `
-        <li>
-            ${item.name} 
-            <button onclick="changeQty(${index}, -1)">➖</button>
-            ${item.qty}
-            <button onclick="changeQty(${index}, 1)">➕</button>
-            = ${item.price * item.qty} MZN
-            <button onclick="removeItem(${index})">❌</button>
-        </li>`;
-    });
-    document.getElementById("cart-items").innerHTML = html;
-    document.getElementById("total").innerText = total;
-}
-
-function changeQty(index, delta) {
-    cart[index].qty += delta;
-    if (cart[index].qty <= 0) cart.splice(index, 1);
-    updateCart();
-}
-
-function removeItem(index) {
-    cart.splice(index, 1);
-    updateCart();
-}
-
-function pay() {
-    let number = document.getElementById("mpesa").value;
-    if (!/^[0-9]{9}$/.test(number) || cart.length === 0) {
-        alert("⚠️ Número M-Pesa inválido ou carrinho vazio!");
-        return;
-    }
-    alert("✅ Pagamento realizado com sucesso!");
-    cart = [];
-    updateCart();
-    document.getElementById("mpesa").value = "";
-}
-
-function searchProduct() {
-    let val = document.getElementById("search").value.toLowerCase();
-    let filtered = products.filter(p => p.name.toLowerCase().includes(val));
-    renderProducts(filtered);
-}
-
-function filterCategory(cat) {
-    if (cat === "all") return renderProducts();
-    let filtered = products.filter(p => p.category === cat);
-    renderProducts(filtered);
-}
-
-function showToast(msg) {
-    let toast = document.createElement("div");
-    toast.className = "toast";
-    toast.innerText = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.remove(); }, 2500);
-}
-
-// Inicializar
-renderProducts();
+});
