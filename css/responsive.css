@@ -1,0 +1,26 @@
+@media(max-width:768px){
+
+.navbar {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.products {
+    grid-template-columns: 1fr;
+}
+
+.modal-content {
+    width: 90%;
+}
+
+.cart-panel {
+    width: 100%;
+}
+
+}
