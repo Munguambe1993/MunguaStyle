@@ -77,7 +77,7 @@ body{
 /* NAVBAR */
 
 .navbar{
-    background:white;
+    background:rgb(1, 99, 18);
     display:flex;
     justify-content:space-between;
     align-items:center;
