@@ -4,12 +4,23 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>MunguaStyle</title>
 
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/responsive.css">
+    <link
+        rel="stylesheet"
+        href="./css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="./css/responsive.css"
+    >
 
 </head>
 
@@ -23,10 +34,17 @@
 
         <h1>MunguaStyle</h1>
 
-        <p>Moda Jovem em Moçambique</p>
+        <p>
+            Moda Jovem em Moçambique
+        </p>
 
-        <button class="btn-shop" onclick="irProdutos()">
+        <button
+            class="btn-shop"
+            onclick="irProdutos()"
+        >
+
             Comprar Agora
+
         </button>
 
     </div>
@@ -38,15 +56,46 @@
 <nav class="navbar">
 
     <div class="logo">
+
         MunguaStyle
+
     </div>
 
     <div class="menu">
-        <a href="#home" onclick="fecharCarrinho()">Home</a>
-        <a href="#produtos" onclick="fecharCarrinho()">Produtos</a>
-        <a href="#contactos" onclick="fecharCarrinho()">Contactos</a>
-        <a href="#login" onclick="fecharCarrinho()">Login</a>
-        <a href="#admin" onclick="fecharCarrinho()">Admin</a>
+
+        <a
+            href="#home"
+            onclick="fecharCarrinho()"
+        >
+            Home
+        </a>
+
+        <a
+            href="#products"
+            onclick="fecharCarrinho()"
+        >
+            Produtos
+        </a>
+
+        <a
+            href="#contactos"
+            onclick="fecharCarrinho()"
+        >
+            Contactos
+        </a>
+
+        <a href="./login.html">
+
+            Login
+
+        </a>
+
+        <a href="./admin.html">
+
+            Admin
+
+        </a>
+
     </div>
 
     <div class="nav-actions">
@@ -58,8 +107,16 @@
             onkeyup="pesquisarProdutos()"
         >
 
-        <div class="cart" id="cartIcon">
-            🛒 <span id="cart-count">0</span>
+        <div
+            class="cart"
+            id="cartIcon"
+        >
+
+            🛒
+            <span id="cart-count">
+                0
+            </span>
+
         </div>
 
     </div>
@@ -68,15 +125,26 @@
 
 <!-- PRODUTOS -->
 
-<section class="products" id="products"></section>
+<section
+    class="products"
+    id="products"
+></section>
 
 <!-- MODAL -->
 
-<div class="modal hidden" id="productModal">
+<div
+    class="modal hidden"
+    id="productModal"
+>
 
     <div class="modal-content">
 
-        <span class="close" onclick="closeModal()">✖</span>
+        <span
+            class="close"
+            onclick="closeModal()"
+        >
+            ✖
+        </span>
 
         <img id="modalImg">
 
@@ -86,10 +154,17 @@
 
         <p id="modalDesc"></p>
 
-        <input type="number" id="qty" value="1" min="1">
+        <input
+            type="number"
+            id="qty"
+            value="1"
+            min="1"
+        >
 
         <button onclick="confirmAdd()">
+
             Adicionar ao Carrinho
+
         </button>
 
     </div>
@@ -98,37 +173,217 @@
 
 <!-- CARRINHO -->
 
-<section class="cart-panel hidden" id="cart-panel">
+<section
+    class="cart-panel hidden"
+    id="cart-panel"
+>
 
     <h2>🛒 Carrinho</h2>
 
     <ul id="cart-items"></ul>
 
-    <h3>Total: <span id="total">0</span> MZN</h3>
+    <h3>
+
+        Total:
+        <span id="total">0</span>
+        MZN
+
+    </h3>
+
+    <!-- BOTAO PAGAMENTO -->
+
+    <button
+    class="checkout-btn"
+    onclick="mostrarPagamento()"
+>
+
+    Finalizar Compra
+
+</button>
+
+<button
+    class="whatsapp-btn"
+    onclick="enviarWhatsApp()"
+>
+
+    Encomendar no WhatsApp
+
+</button>
+
+    <!-- BOX PAGAMENTO -->
+
+    <div
+        id="payment-box"
+        class="hidden"
+    >
+
+        <h3>
+
+            Escolha o Método
+            de Pagamento
+
+        </h3>
+
+        <div class="payment-buttons">
+
+            <button
+                onclick="selecionarMetodo('mpesa')"
+            >
+                M-Pesa
+            </button>
+
+            <button
+                onclick="selecionarMetodo('emola')"
+            >
+                e-Mola
+            </button>
+
+            <button
+                onclick="selecionarMetodo('mkesh')"
+            >
+                mKesh
+            </button>
+
+            <button
+                onclick="selecionarMetodo('visa')"
+            >
+                Visa
+            </button>
+
+        </div>
+
+        <!-- FORM -->
+
+        <div
+            id="payment-form"
+            class="hidden"
+        >
+
+            <h3 id="payment-title"></h3>
+
+            <!-- TELEFONE -->
+
+            <div
+                id="telefone-box"
+                class="hidden"
+            >
+
+                <input
+                    type="text"
+                    id="telefone"
+                    placeholder="Número de telefone"
+                >
+
+            </div>
+
+            <!-- CARTAO -->
+
+            <div
+                id="cartao-box"
+                class="hidden"
+            >
+
+                <input
+                    type="text"
+                    id="numero-cartao"
+                    placeholder="Número do Cartão"
+                >
+
+                <input
+                    type="text"
+                    id="validade-cartao"
+                    placeholder="MM/AA"
+                >
+
+                <input
+                    type="text"
+                    id="cvv-cartao"
+                    placeholder="CVV"
+                >
+
+            </div>
+
+            <button onclick="enviarCodigo()">
+
+                Continuar
+
+            </button>
+
+        </div>
+
+        <!-- OTP -->
+
+        <div
+            id="otp-box"
+            class="hidden"
+        >
+
+            <h3>
+
+                Introduza o Código OTP
+
+            </h3>
+
+            <input
+                type="text"
+                id="otp"
+                placeholder="Código OTP"
+            >
+
+            <button
+                onclick="confirmarPagamento()"
+            >
+
+                Confirmar Pagamento
+
+            </button>
+
+        </div>
+
+    </div>
 
 </section>
 
 <!-- CONTACTOS -->
 
-<section class="contact-section" id="contactos">
+<section
+    class="contact-section"
+    id="contactos"
+>
 
     <h2>Contactos</h2>
 
     <div class="contact-grid">
 
         <div class="contact-card">
+
             <h3>Telefone</h3>
-            <p>+258 84 000 0000</p>
+
+            <p>
+                +258 84 000 0000
+            </p>
+
         </div>
 
         <div class="contact-card">
+
             <h3>Email</h3>
-            <p>munguastyle@gmail.com</p>
+
+            <p>
+                munguastyle@gmail.com
+            </p>
+
         </div>
 
         <div class="contact-card">
+
             <h3>Localização</h3>
-            <p>Beluluane, Moçambique</p>
+
+            <p>
+                Beluluane,
+                Moçambique
+            </p>
+
         </div>
 
     </div>
@@ -142,21 +397,40 @@
     <div class="footer-container">
 
         <div>
+
             <h3>MunguaStyle</h3>
-            <p>Moda Jovem em Moçambique</p>
+
+            <p>
+                Moda Jovem em
+                Moçambique
+            </p>
+
         </div>
 
         <div>
+
             <h4>Redes Sociais</h4>
+
             <p>Facebook</p>
+
             <p>Instagram</p>
+
             <p>WhatsApp</p>
+
         </div>
 
         <div>
+
             <h4>Contactos</h4>
-            <p>+258 84 000 0000</p>
-            <p>munguastyle@gmail.com</p>
+
+            <p>
+                +258 84 000 0000
+            </p>
+
+            <p>
+                munguastyle@gmail.com
+            </p>
+
         </div>
 
     </div>
@@ -166,5 +440,4 @@
 <script src="./js/script.js"></script>
 
 </body>
-
 </html>
