@@ -248,6 +248,13 @@ function showToast(msg){
     },3000);
 
 }
+function fecharCarrinho() {
+    const cartPanel = document.getElementById("cart-panel");
+
+    if(cartPanel){
+        cartPanel.classList.add("hidden");
+    }
+}
 
 /* INICIAR */
 
