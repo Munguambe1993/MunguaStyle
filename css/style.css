@@ -422,3 +422,62 @@ footer{
     border-radius:20px;
     box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
+#payment-form,
+#otp-box{
+    margin-top:20px;
+}
+
+#payment-form input,
+#otp-box input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+#payment-form button,
+#otp-box button{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border:none;
+    background:#111;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#payment-form button:hover,
+#otp-box button:hover{
+    background:#d4af37;
+}
+.whatsapp-btn{
+
+    width:100%;
+
+    padding:14px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#25D366;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+.whatsapp-btn:hover{
+
+    transform:scale(1.02);
+
+}
